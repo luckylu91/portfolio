@@ -1,6 +1,13 @@
 import * as math from "mathjs";
+import { hasUncaughtExceptionCaptureCallback } from "process";
+import { TypeOfExpression } from "typescript";
 import { vx, vxNeg, vxyz, vxyzNeg, vy, vyNeg, vz, vzNeg } from "./general";
 
+type Rotation = {
+    axis: math.Matrix,
+    otherAxis: [math.Matrix, math.Matrix],
+    angle: number,
+};
 const mainNormals: [math.Matrix, [math.Matrix, math.Matrix]][] = [
 	[vx, [vyNeg, vz]],
 	[vy, [vx, vz]],
@@ -25,11 +32,7 @@ export class RubikState {
 	facetColors: string[][][];
 	facetVertices: math.Matrix[][][][]; // face, row, col, points
 	facetNormals: math.Matrix[][][];
-	currentRotation?: {
-		axis: math.Matrix,
-		otherAxis: [math.Matrix, math.Matrix],
-		angle: number,
-	};
+	currentRotation?: Rotation;
 
 	constructor() {
 		this.facetColors = generateFacetColors();
@@ -55,9 +58,9 @@ export class RubikState {
 
 	draw(ctx: CanvasRenderingContext2D, offsetX: number, offsetY: number, scale: number) {
 		this.drawFiltered(ctx, offsetX, offsetY, scale, (iFace: number, x: number, y: number) => iFace == 5 || (iFace != 2 && y == 0));
-		this.drawInterstice(ctx, offsetX, offsetY, scale, -1);
+		this.drawInterstice(ctx, offsetX, offsetY, scale, 2, -1);
 		this.drawFiltered(ctx, offsetX, offsetY, scale, (iFace: number, x: number, y: number) => iFace != 2 && iFace != 5 && y == 1);
-		this.drawInterstice(ctx, offsetX, offsetY, scale, 1);
+		this.drawInterstice(ctx, offsetX, offsetY, scale, 2, 1, this.currentRotation);
 		this.drawFiltered(ctx, offsetX, offsetY, scale, (iFace: number, x: number, y: number) => iFace == 2 || (iFace != 5 && y == 2));
 	}
 
@@ -75,21 +78,24 @@ export class RubikState {
 		}
 	}
 
-	drawInterstice(ctx: CanvasRenderingContext2D, offsetX: number, offsetY: number, scale: number, direction: number) {
+	drawInterstice(ctx: CanvasRenderingContext2D, offsetX: number, offsetY: number, scale: number, axisIndex: number, direction: number, rotation?: Rotation) {
 		if (this.currentRotation === undefined) {
 			return ;
 		}
 		const polygon = [[1, 1], [1, -1], [-1, -1], [-1, 1]].map(d12 => {
 			const [d1, d2] = d12;
 			const d3 = 1 / 3 * Math.sign(direction);
-			const [v1, v2] = this.currentRotation!.otherAxis;
-			const v3 = this.currentRotation!.axis;
+			const v3 = axisFromIndex(axisIndex);
+			const [v1, v2] = otherAxisFromIndex(axisIndex);
 			let p = math.add(
 				math.multiply(v1, d1),
 				math.multiply(v2, d2)
 			);
 			p = math.add(p, math.multiply(v3, d3));
-			return math.rotate(p, this.currentRotation!.angle, this.currentRotation!.axis);
+            if (rotation !== undefined) {
+                p = math.rotate(p, this.currentRotation!.angle, this.currentRotation!.axis);
+            }
+			return p;
 		});
 		drawOnePolygon(ctx, polygon, "black", scale, offsetX, offsetY);
 	}
@@ -145,4 +151,49 @@ function generateFacetNormals(): math.Matrix[][][] {
 	return mainNormals.map(v =>
 		Array.from({length: 3}, () => Array.from({length: 3}, () => v[0]))
 	);
+}
+
+const movementNotations = new Map([
+    ["R", 0],
+    ["F", 1],
+    ["U", 2],
+    ["L", 3],
+    ["B", 4],
+    ["D", 5],
+]);
+const movementSliceNotations = new Map([
+    ["S", 0],
+    ["M", 1],
+    ["E", 2],
+]);
+type Movement = {
+    axisIndex: number,
+    direction: number,
+    rowIndex: number
+}
+function rotationFromNotation(rotationStr: string): Movement {
+    let axisIndex, direction = 1, rowIndex = 0;
+    const letter = rotationStr[0];
+
+    if (movementNotations.has(letter)) {
+        axisIndex = movementNotations.get(letter)!;
+        if (axisIndex >= 3) {
+            axisIndex -= 3;
+            direction = -1;
+            rowIndex = 2;
+        }
+    }
+    else {
+        axisIndex = movementSliceNotations.get(letter)!;
+        rowIndex = 1;
+    }
+    if (rotationStr.length >= 2) {
+        direction *= -1;
+    }
+
+    return {
+        axisIndex,
+        direction,
+        rowIndex
+    };
 }
