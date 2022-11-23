@@ -161,7 +161,8 @@ export interface UnitCube {
 export abstract class UnitCube implements UnitCube {
   rotate(movement: Movement): void {
     if (this.isAffected(movement)) {
-      this.position = rotate(movement.rotAxis, this.position);
+      const rotAxis = movement.positiveDirection ? movement.rotAxis : oppositeAxis(movement.rotAxis);
+      this.position = rotate(rotAxis, this.position);
       const rotAxisVec = mainNormals[movement.rotAxis][0];
       const angle = (movement.positiveDirection ? +1 : -1) * Math.PI / 2;
       this.facets.forEach(facet => facet.rotate(rotAxisVec, angle));

@@ -68,6 +68,7 @@ export class RubikSliderAnimation extends React.Component<Props, State> {
     else if (newMovementIndex < this.currentMovementIndex) {
       movements = this.props.movements
         .slice(newMovementIndex, this.currentMovementIndex)
+        .reverse()
         .map(movement => {
           const movementClone = {...movement};
           movementClone.positiveDirection = !movementClone.positiveDirection;
