@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { FormEvent, RefObject, useRef, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { ScrollAnimation } from './animations/ScrollAnimation';
+import { RubikSliderAnimation } from './animations/RubikSliderAnimation';
 import { RubikAnimation } from './animations/rubik/RubikAnimation';
-import { RubiksCube } from './animations/rubik/UnitCube';
+import { Movement, parseMovementString } from './animations/rubik/UnitCube';
 
 // function draw(ctx: CanvasRenderingContext2D, scrollFactor: number) {
 //   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -17,10 +17,27 @@ import { RubiksCube } from './animations/rubik/UnitCube';
 //   // ctx.fillText(scrollFactor.toString(), 50, 50);
 // }
 
-const test = new RubiksCube();
 
 function App() {
-  let [movementNotation, setMovementNotation] = useState("U");
+  let [movements, setMovements] = useState<Movement[]>([]);
+  let inputRef: React.MutableRefObject<HTMLInputElement | null> = useRef(null);
+
+  //forceUpdate
+  let [_count, updateCount] = useState(0);
+  const forceUpdate = () => updateCount(value => value + 1);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const value  = inputRef.current!.value;
+    const parsedMovements = parseMovementString(value);
+    if (parsedMovements === null) {
+      console.error("Invalid movements string");
+    }
+    else {
+      setMovements(parsedMovements);
+    }
+    forceUpdate();
+  }
 
   return (
     <div className="App">
@@ -38,12 +55,13 @@ function App() {
           Learn React
         </a>
       </header>
+      <form onSubmit={handleSubmit}>
+        <input ref={inputRef} type="text"/>
+        <input type="submit"/>
+      </form>
       {/* <ScrollAnimation draw={draw}></ScrollAnimation> */}
-      <input type="text" onChange={e => {
-        setMovementNotation(e.target.value);
-        console.log(e.target.value);
-      }} />
-      <RubikAnimation size={500} movementNotation={movementNotation}/>
+      {/* <RubikAnimation size={500} movementNotation={movementNotation}/> */}
+      <RubikSliderAnimation size={500} movements={movements}/>
       <div id="d"></div>
     </div>
   );

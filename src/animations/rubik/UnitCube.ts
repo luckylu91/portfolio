@@ -10,26 +10,45 @@ export type Movement = {
   positiveDirection: boolean,
   middle: boolean,
 };
+function defaultMovement(): Movement {
+  return {
+    rotAxis: 0,
+    positiveDirection: true,
+    middle: true,
+  }
+}
+
 type Rotation = (point: math.Matrix) => math.Matrix;
 class Facet {
-  rotatedPoints: math.Matrix[];
-  rotatedNormal: math.Matrix;
+  // rotatedPoints: math.Matrix[];
+  // rotatedNormal: math.Matrix;
   constructor(
     public points: math.Matrix[],
     public normal: math.Matrix,
     public color: string,
   ) {
-    this.rotatedPoints = clonePointArray(points);
-    this.rotatedNormal = math.clone(normal);
+    // this.rotatedPoints = clonePointArray(points);
+    // this.rotatedNormal = math.clone(normal);
+  }
+  rotated(rotAxis: math.Matrix, angle: number): Facet {
+    return new Facet(
+      this.points.map(point => math.rotate(point, angle, rotAxis)),
+      math.rotate(this.normal, angle, rotAxis),
+      this.color,
+    );
   }
   rotate(rotAxis: math.Matrix, angle: number) {
-    this.rotatedPoints = this.points.map(point => math.rotate(point, angle, rotAxis));
-    this.rotatedNormal = math.rotate(this.normal, angle, rotAxis);
+    this.points = this.points.map(point => math.rotate(point, angle, rotAxis));
+    this.normal = math.rotate(this.normal, angle, rotAxis);
   }
-  resetRotation() {
-    this.rotatedPoints = clonePointArray(this.points);
-    this.rotatedNormal = math.clone(this.normal);
-  }
+  // lockPosition() {
+  //   this.points = clonePointArray(this.rotatedPoints);
+  //   this.normal = math.clone(this.rotatedNormal);
+  // }
+  // resetRotation() {
+  //   this.rotatedPoints = clonePointArray(this.points);
+  //   this.rotatedNormal = math.clone(this.normal);
+  // }
 }
 
 // vector constants
@@ -108,7 +127,6 @@ const rotationsCycle = new Map([
 const rotations = new Map<string, number>();
 const rotationsGetAxes = (axis01: [number, number]) => rotations.get(axis01.join(','));
 const rotationsSetAxes = (axis01: [number, number], val: number) => rotations.set(axis01.join(','), val);
-
 for (let rotAxis = 0; rotAxis < 6; rotAxis++) {
   const cycle = rotationsCycle.get(rotAxis)!;
   let v = cycle.at(-1)!;
@@ -116,20 +134,19 @@ for (let rotAxis = 0; rotAxis < 6; rotAxis++) {
     rotationsSetAxes([rotAxis, v], vNext);
     v = vNext;
   }
-
   rotationsSetAxes([rotAxis, rotAxis], rotAxis);
   rotationsSetAxes([rotAxis, oppositeAxis(rotAxis)], oppositeAxis(rotAxis));
 }
 
-function rotate<T extends number | Array<number>>(rotAxis: number, axis: T): T {
-  if (axis instanceof Array<number>) {
-    for (let i = 0; i < axis.length; i++) {
-      axis[i] = rotationsGetAxes([rotAxis, axis[i]])!;
+function rotate<T extends number | Array<number>>(rotAxis: number, axes: T): T {
+  if (axes instanceof Array<number>) {
+    for (let i = 0; i < axes.length; i++) {
+      axes[i] = rotationsGetAxes([rotAxis, axes[i]])!;
     }
-    return axis as T;
+    return axes as T;
   }
   else {
-    return rotationsGetAxes([rotAxis, axis])! as T;
+    return rotationsGetAxes([rotAxis, axes])! as T;
   }
 }
 
@@ -139,23 +156,26 @@ export interface UnitCube {
   position: number[];
   isAffected(movement: Movement): boolean;
   facets: Facet[];
-  // facets: math.Matrix[][];
-  // facetNormals: math.Matrix[];
-  // facetColors: string[];
 }
 
 export abstract class UnitCube implements UnitCube {
-  rotate(rotAxis: number): void {
-    rotate(rotAxis, this.position);
+  rotate(movement: Movement): void {
+    if (this.isAffected(movement)) {
+      this.position = rotate(movement.rotAxis, this.position);
+      const rotAxisVec = mainNormals[movement.rotAxis][0];
+      const angle = (movement.positiveDirection ? +1 : -1) * Math.PI / 2;
+      this.facets.forEach(facet => facet.rotate(rotAxisVec, angle));
+    }
   }
 
   abstract priorities(movement: Movement): number[];
-  rotateFacets(movement: Movement, rotAxis: math.Matrix, angle: number) {
+
+  rotatedFacets(movement: Movement, rotAxisVec: math.Matrix, angle: number): Facet[] {
     if (this.isAffected(movement)) {
-      this.facets.forEach(facet => facet.rotate(rotAxis, angle));
+      return this.facets.map(facet => facet.rotated(rotAxisVec, angle));
     }
     else {
-      this.facets.forEach(facet => facet.resetRotation());
+      return this.facets;
     }
   }
 }
@@ -211,10 +231,14 @@ export class Edge extends UnitCube {
   }
 
   isAffected(movement: Movement): boolean {
+    const movementAxisOpp = oppositeAxis(movement.rotAxis);
     return (
       !movement.middle && this.position.includes(movement.rotAxis)
     ) || (
-        movement.middle && !this.position.includes(movement.rotAxis)
+        movement.middle && (
+          !this.position.includes(movement.rotAxis) &&
+          !this.position.includes(movementAxisOpp)
+        )
       );
   }
 
@@ -247,6 +271,7 @@ export class Corner extends UnitCube {
     const facetColors = [facesColor[axis0], facesColor[axis1], facesColor[axis2], ...Array(3).fill("black")];
     this.facets = facetsPoints.map((points, i) => new Facet(points, facetsNormal[i], facetColors[i]));
   }
+
   isAffected(movement: Movement): boolean {
     return !movement.middle && this.position.includes(movement.rotAxis);
   }
@@ -288,28 +313,55 @@ export class RubiksCube {
       ...facePairs.map(axisPair => new Edge(axisPair as [number, number])),
       ...faceTriplets.map(axisTriplet => new Corner(axisTriplet as [number, number, number]))
     ];
-    console.log(this.cubes.length);
   }
 
-  private rotateFacets(movement: Movement, rotAxis: math.Matrix, angle: number) {
-    this.cubes.forEach(cube => cube.rotateFacets(movement, rotAxis, angle));
+  rotate(movement: Movement) {
+    this.cubes.forEach(cube => cube.rotate(movement));
   }
 
-  draw(ctx: CanvasRenderingContext2D, offsetX: number, offsetY: number, scale: number, movement: Movement, angle: number) {
-    const rotAxis = mainNormals[movement.rotAxis][0];
-    this.rotateFacets(movement, rotAxis, angle);
+  draw(ctx: CanvasRenderingContext2D, offsetX: number, offsetY: number, scale: number, movement: Movement = defaultMovement(), angle: number = 0) {
+    const rotAxisVec = mainNormals[movement.rotAxis][0];
+    // this.cubes.forEach(cube => cube.rotateFacets(movement, rotAxisVec, angle));
     let priorities: [number, Facet][] = this.cubes.flatMap(cube => {
       const priorities = cube.priorities(movement);
-      return cube.facets.map((facet, j) => [priorities[j], facet]) as [number, Facet][]
+      return cube.rotatedFacets(movement, rotAxisVec, angle).map((facet, j) => [priorities[j], facet]) as [number, Facet][]
     });
-    const facetOrdered = priorities.sort(([priority, _]) => priority).map(([_, facet]) => facet);
+    const facetOrdered = priorities.sort(([priority1, f1], [priority2, f2]) => priority1 - priority2).map(([_, facet]) => facet);
     for (let facet of facetOrdered) {
-      if (facet.rotatedNormal.get([2]) < 0)
+      if (facet.normal.get([2]) < 0)
         continue;
-      drawOnePolygon(ctx, facet.rotatedPoints, facet.color, scale, offsetX, offsetY);
+      drawOnePolygon(ctx, facet.points, facet.color, scale, offsetX, offsetY);
     }
+    // this.cubes.forEach(cube => cube.resetRotation());
   }
 }
+
+
+/*
+DEBUG
+*/
+// function drawOnePolygon(ctx: CanvasRenderingContext2D, polygon: math.Matrix[], color: string, scale: number, offsetX: number, offsetY: number, priority: number) {
+//   ctx.fillStyle = color;
+//   ctx.beginPath();
+//   for (let j = 0; j < polygon.length; j++) {
+//     let vertex = polygon[j];
+//     const x = vertex.get([0]) * scale + offsetX;
+//     const y = vertex.get([1]) * scale + offsetY;
+//     if (j == 0)
+//       ctx.moveTo(x, y);
+//     else
+//       ctx.lineTo(x, y);
+//   }
+//   ctx.closePath();
+//   ctx.fill();
+//   //
+//   const mean = math.multiply(addMatrices(...polygon), 1 / 4);
+//   const x = mean.get([0]) * scale + offsetX;
+//   const y = mean.get([1]) * scale + offsetY;
+//   ctx.font = "18px Arial";
+//   ctx.fillStyle = "black";
+//   ctx.fillText(priority.toString(), x, y);
+// }
 
 // graphic primitive
 function drawOnePolygon(ctx: CanvasRenderingContext2D, polygon: math.Matrix[], color: string, scale: number, offsetX: number, offsetY: number) {
@@ -327,7 +379,6 @@ function drawOnePolygon(ctx: CanvasRenderingContext2D, polygon: math.Matrix[], c
   ctx.closePath();
   ctx.fill();
 }
-
 
 // Parse notation into Movement data structure
 const movementNotations = new Map([
@@ -363,4 +414,17 @@ export function movementFromNotation(notation: string) {
     middle,
     positiveDirection
   };
+}
+
+const movementRegex = /^[RFULBDSME]'?/;
+export function parseMovementString(s: string): Movement[] | null {
+  const movements = [];
+  while (s.length > 0) {
+    const match = s.match(movementRegex);
+    if (match === null)
+      return null;
+    movements.push(movementFromNotation(match[0]));
+    s = s.slice(match.length);
+  }
+  return movements;
 }
