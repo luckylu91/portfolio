@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { ScrollAnimation } from './animations/ScrollAnimation';
 import { RubikAnimation } from './animations/rubik/RubikAnimation';
+import { RubiksCube } from './animations/rubik/UnitCube';
 
 // function draw(ctx: CanvasRenderingContext2D, scrollFactor: number) {
 //   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -16,7 +17,11 @@ import { RubikAnimation } from './animations/rubik/RubikAnimation';
 //   // ctx.fillText(scrollFactor.toString(), 50, 50);
 // }
 
+const test = new RubiksCube();
+
 function App() {
+  let [movementNotation, setMovementNotation] = useState("U");
+
   return (
     <div className="App">
       <header className="App-header">
@@ -34,7 +39,11 @@ function App() {
         </a>
       </header>
       {/* <ScrollAnimation draw={draw}></ScrollAnimation> */}
-      <RubikAnimation size={500}/>
+      <input type="text" onChange={e => {
+        setMovementNotation(e.target.value);
+        console.log(e.target.value);
+      }} />
+      <RubikAnimation size={500} movementNotation={movementNotation}/>
       <div id="d"></div>
     </div>
   );

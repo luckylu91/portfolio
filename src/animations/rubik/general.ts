@@ -1,5 +1,10 @@
 import * as math from "mathjs";
 
+// export const isometricMatrix = math.multiply(math.matrix([
+// 	[Math.sqrt(3), 0, -Math.sqrt(3)],
+// 	[1, 2, 1],
+// 	[Math.sqrt(2), -Math.sqrt(2), Math.sqrt(2)],
+// ]), 1 / Math.sqrt(6));
 export const isometricMatrix = math.multiply(math.matrix([
 	[Math.sqrt(3), -Math.sqrt(3), 0],
 	[1, 1, -2],

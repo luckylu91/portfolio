@@ -4,9 +4,11 @@ import * as math from "mathjs";
 import { isometricMatrix, vx, vy, vz } from "./general";
 import { rotationFromNotation, RubikState } from "./RubikState";
 import { SliderAnimation } from "../SliderAnimation";
+import { Movement, movementFromNotation, RubiksCube } from "./UnitCube";
 
 type Props = {
-  size: number
+  size: number,
+  movementNotation: string
 };
 type State = {};
 
@@ -26,7 +28,9 @@ export class RubikAnimation extends React.Component<Props, State> {
   faces: math.Matrix[][];
   scale: number;
   offset: number[];
-  state = new RubikState();
+//   state = new RubikState();
+  rubiksCube = new RubiksCube();
+  movement: Movement;
 
   constructor(props: Props) {
     super(props);
@@ -37,8 +41,9 @@ export class RubikAnimation extends React.Component<Props, State> {
     );
     this.scale = this.props.size / (2 * Math.sqrt(3));
     this.offset = [this.props.size / 2, this.props.size / 2];
-    this.state.setMovement(rotationFromNotation("D'"));
-    this.state.completeMovement();
+    this.movement = movementFromNotation(this.props.movementNotation);
+    // this.state.setMovement(rotationFromNotation("D'"));
+    // this.state.completeMovement();
   }
 
   draw(ctx: CanvasRenderingContext2D, scrollFactor: number) {
@@ -50,8 +55,9 @@ export class RubikAnimation extends React.Component<Props, State> {
     drawVector(ctx, 10, 10, math.multiply(vy, 10), "#00ff00");
     drawVector(ctx, 10, 10, math.multiply(vz, 10), "#0000ff");
 
-    this.state.move(scrollFactor);
-    this.state.draw(ctx, this.offset[0], this.offset[1], this.scale);
+    // this.state.move(scrollFactor);
+    // this.state.draw(ctx, this.offset[0], this.offset[1], this.scale);
+    this.rubiksCube.draw(ctx, this.offset[0], this.offset[1], this.scale, this.movement, scrollFactor * Math.PI / 2);
   }
 
   render() {
