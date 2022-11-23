@@ -1,8 +1,8 @@
 import React, { ChangeEvent } from "react";
 import Stack from "@mui/material/Stack";
-import { Movement, RubiksCube } from "./rubik/UnitCube";
+import { Movement } from "./rubik/utils";
+import { RubiksCube } from "./rubik/RubiksCube";
 import * as math from "mathjs";
-import { isometricMatrix, vx, vy, vz } from "./rubik/general";
 
 type Props = {
   size: number,
@@ -34,6 +34,7 @@ export class RubikSliderAnimation extends React.Component<Props, State> {
 
   componentDidMount() {
     this.ctx = this.canvasRef.current!.getContext("2d")!;
+    this.draw();
   }
 
   componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any): void {
@@ -86,12 +87,9 @@ export class RubikSliderAnimation extends React.Component<Props, State> {
     this.ctx!.strokeStyle = "black";
     this.ctx!.fillStyle = "grey";
     this.ctx!.fillRect(0, 0, this.ctx!.canvas.width, this.ctx!.canvas.height);
-
-    drawVector(this.ctx!, 10, 10, math.multiply(vx, 10), 255, 0, 0);
-    drawVector(this.ctx!, 10, 10, math.multiply(vy, 10), 0, 255, 0);
-    drawVector(this.ctx!, 10, 10, math.multiply(vz, 10), 0, 0, 255);
-
-
+    // drawVector(this.ctx!, 10, 10, math.multiply(vx, 10), 255, 0, 0);
+    // drawVector(this.ctx!, 10, 10, math.multiply(vy, 10), 0, 255, 0);
+    // drawVector(this.ctx!, 10, 10, math.multiply(vz, 10), 0, 0, 255);
     if (this.props.movements.length == 0) {
       this.rubiksCube.draw(this.ctx!, this.offset[0], this.offset[1], this.scale);
     }

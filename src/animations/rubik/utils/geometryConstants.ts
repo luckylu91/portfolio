@@ -1,10 +1,5 @@
 import * as math from "mathjs";
 
-// export const isometricMatrix = math.multiply(math.matrix([
-// 	[Math.sqrt(3), 0, -Math.sqrt(3)],
-// 	[1, 2, 1],
-// 	[Math.sqrt(2), -Math.sqrt(2), Math.sqrt(2)],
-// ]), 1 / Math.sqrt(6));
 export const isometricMatrix = math.multiply(math.matrix([
 	[Math.sqrt(3), -Math.sqrt(3), 0],
 	[1, 1, -2],
@@ -28,3 +23,13 @@ export const vyNeg = math.multiply(isometricMatrix, uyNeg);
 export const vzNeg = math.multiply(isometricMatrix, uzNeg);
 export const vxyz = math.multiply(isometricMatrix, uxyz);
 export const vxyzNeg = math.multiply(isometricMatrix, uxyzNeg);
+
+// vector constants
+export const mainNormals: [math.Matrix, [math.Matrix, math.Matrix]][] = [
+  [vx, [vyNeg, vz]],
+  [vy, [vx, vz]],
+  [vz, [vx, vy]],
+  [vxNeg, [vy, vzNeg]],
+  [vyNeg, [vxNeg, vzNeg]],
+  [vzNeg, [vxNeg, vyNeg]]
+];
