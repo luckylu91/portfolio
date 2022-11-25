@@ -1,6 +1,3 @@
-import * as math from "mathjs";
-import { mainNormals } from "./geometryConstants";
-
 // general utils
 export function oppositeAxis(axis: number): number {
   return axis < 3 ? axis + 3 : axis - 3;
