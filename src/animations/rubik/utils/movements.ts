@@ -53,6 +53,12 @@ export function movementFromNotation(notation: string) {
   };
 }
 
+export function reversedMovement(movement: Movement): Movement {
+  const movementR = {...movement};
+  movementR.positiveDirection = !movementR.positiveDirection;
+  return movementR;
+}
+
 const movementRegex = /^[RFULBDSME]'?/;
 
 export function parseMovementString(s: string): Movement[] | null {

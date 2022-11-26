@@ -1,6 +1,8 @@
-section {
-  margin: 50;
-  padding: 20;
-  border-radius: 5;
+.section {
+  margin: 50px;
+  padding: 20px;
+  border-radius: 5px;
   background-color: blanchedalmond;
+  width: 600px;
 }
+
