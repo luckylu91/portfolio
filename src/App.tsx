@@ -28,25 +28,33 @@ function App() {
       {/* <header className="App-header">
       </header> */}
       <RubikScrollAnimation size={500}/>
-      <Section title="Présentation">
-        Je suis passionné de science et de logique depuis ma jeunesse.
-        J'ai débuté l'informatique au lycée sur lesiteduzero.com, avel le tutoriel pour apprendre le C.
-        Après cela je me suis plu centré sur les math et la physique en prépa / école d'ingé.
-        J'aime écrire.
-        J'aime l'absurde.
-        Fan de math et de casse-têtes.
-        Retourner des problèmes.
+      <Section title="Profil">
+        <p>
+          Je suis passionné de science et de logique depuis ma jeunesse.
+          J'ai débuté l'informatique au lycée grâce à lesiteduzero.com (novellement openclassroom).
+          Par la suite j'ai fait beaucoup de math et de physique en prépa et en école d'ingénieur.
+          J'avais considéré poursuivre en Machine Learning mais j'ai rapidement admis que c'était le développement qui était fait pour moi.
+          Aujourd'hui je cherche des projets qui me challenge de la conception à la réalisation, et j'aimerais les faire dans une équipe dynamique et qui a la même passion que moi.
+        </p>
+      </Section>
+      <Section title="À propos de moi">
+        <p>
+          Mon type d'humour c'est l'absurde, et de peinture le surréalisme.
+          J'adore le cinéma.
+          Il m'arrive d'essayer d'exprimer ma créativité "artistique"
+        </p>
       </Section>
       <Section title="Jeux vidéo">
-
-      </Section>
-      <Section title="Projets">
-        {/* <Project>
-
-        </Project> */}
-      </Section>
-      <Section title="Expérience">
         <p>
+          Depuis petit je suis baigné dans l'univers des jeux vidéo: les consoles portables, les discussions à l'école, les soirées entre amis.
+          Aujourd'hui les occasions et les impulsions de jouer se raréfient de plus en plus.
+          Néanmoins je pense que ce média m'attire toujours et j'aimerais faire une partie de ma carière à essayer d'en développer.
+          Je suis admiratif des avancées récentes en technique et en ergonomie, en game design.
+        </p>
+      </Section>
+
+      <Section title="Expérience">
+        {/* <p>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris malesuada ultrices ligula in mattis. Morbi et tristique augue. Donec pulvinar congue felis, et bibendum augue placerat eget. Duis quis rhoncus eros, vitae suscipit dui. Quisque vehicula ultrices dictum. Mauris lectus felis, ultricies ut ipsum eu, luctus sollicitudin velit. Quisque a lacus ut erat semper placerat ornare in dolor. Phasellus nec odio convallis arcu congue viverra id suscipit felis. Aliquam consectetur turpis vitae viverra varius. Duis venenatis in nunc ut consectetur. Praesent tincidunt ante at enim tempus tempor. In non feugiat orci, eu consectetur nibh.
         </p>
         <p>
@@ -60,7 +68,12 @@ function App() {
         </p>
         <p>
           Nullam sollicitudin justo nec massa iaculis lobortis. Donec ut euismod sem. Nam iaculis volutpat dictum. Donec feugiat dui eu magna aliquam consectetur. Donec pellentesque massa arcu. Maecenas dictum imperdiet quam non ultrices. Donec vestibulum commodo lectus in sodales. Fusce sagittis tellus quis felis commodo tincidunt. Vivamus ultricies, enim vitae porttitor luctus, mi augue efficitur sapien, ut auctor justo odio in est. Fusce sagittis dignissim neque quis placerat. Donec mollis lorem ac tellus congue, in sagittis nulla blandit. Morbi ultricies ipsum sit amet enim venenatis, ac eleifend nisi dictum. Aenean volutpat auctor libero, vitae rutrum massa mattis id. Morbi dictum justo eu lorem tristique, sit amet fringilla lacus mattis.
-        </p>
+        </p> */}
+        J'ai travaillé à Sinequa dans le cadre d'une année de césure.
+        Sinequa édite une solution incluant notamment un moteur de recherche, déstinée à une utilisation en interne dans les réseaux de leurs clients.
+        Le travail que j'ai effectué consistait à de la Recherche et Développement dans l'Extraction de Relations entre Entités Nommées, un sous domaine du NLP (Natural Language Processing).
+        J'étais en autonomie et j'ai implémenté un algorithme appelé BREDS en python.
+        J'ai également effectué des tickets pour la solution de l'entreprise.
       </Section>
       <Section title='lalala'>
       <p>

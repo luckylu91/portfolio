@@ -1,8 +1,23 @@
 .section {
   margin: 50px;
   padding: 20px;
-  border-radius: 5px;
-  background-color: blanchedalmond;
   width: 600px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
+.section-title {
+  background-color: blue;
+  color: white;
+  justify-self: center;
+  width: 100%;
+  border-radius: 10px 10px 0 0;
+  -moz-border-radius: 10px 10px 0 0;
+}
+
+.section-content {
+  background-color: whitesmoke;
+  border-radius: 0 0 10px 10px;
+  -moz-border-radius: 0 0 10px 10px;
+}

@@ -26,14 +26,15 @@ export class RubiksCube {
   }
 
   rotate(movement: Movement) {
-    this.cubes.forEach(cube => cube.rotate(movement));
+    this.cubes.forEach(cube => cube.move(movement));
   }
 
   draw(ctx: CanvasRenderingContext2D, offsetX: number, offsetY: number, scale: number, movement: Movement = defaultMovement(), angle: number = 0) {
     const rotAxisVec = mainNormals[movement.rotAxis][0];
     let priorities: [number, Facet][] = this.cubes.flatMap(cube => {
       const priorities = cube.priorities(movement);
-      return cube.rotatedFacets(movement, rotAxisVec, angle).map((facet, j) => [priorities[j], facet]) as [number, Facet][]
+      cube.rotate(movement, rotAxisVec, angle);
+      return cube.rotatedFacets!.map((facet, j) => [priorities[j], facet]) as [number, Facet][]
     });
     const facetOrdered = priorities.sort(([priority1, f1], [priority2, f2]) => priority1 - priority2).map(([_, facet]) => facet);
     for (let facet of facetOrdered) {

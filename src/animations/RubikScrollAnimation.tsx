@@ -38,7 +38,7 @@ export class RubikScrollAnimation extends React.Component<Props, State> {
     this.ctx = this.canvasRef.current!.getContext("2d")!;
     this.rubiksCube = new RubiksCube();
     this.currentMovementIndex = 0;
-    this.movements = parseMovementString("UFMF'MD")!;
+    this.movements = parseMovementString("UFMF'MDMSF'FUU'")!;
     this.updateCubeFromScroll();
     this.movements.slice().reverse().forEach(movement => this.rubiksCube!.rotate(reversedMovement(movement)));
     this.draw();

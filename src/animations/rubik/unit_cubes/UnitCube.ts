@@ -8,10 +8,13 @@ export interface UnitCube {
   position: number[];
   isAffected(movement: Movement): boolean;
   facets: Facet[];
+  rotatedFacets?: Facet[];
 }
 
 export abstract class UnitCube implements UnitCube {
-  rotate(movement: Movement): void {
+  abstract priorities(movement: Movement): number[];
+
+  move(movement: Movement): void {
     if (this.isAffected(movement)) {
       const rotAxis = movement.positiveDirection ? movement.rotAxis : oppositeAxis(movement.rotAxis);
       rotateAll(rotAxis, this.position);
@@ -21,14 +24,18 @@ export abstract class UnitCube implements UnitCube {
     }
   }
 
-  abstract priorities(movement: Movement): number[];
-
-  rotatedFacets(movement: Movement, rotAxisVec: math.Matrix, angle: number): Facet[] {
+  rotate(movement: Movement, rotAxisVec: math.Matrix, angle: number) {
+    if (this.rotatedFacets === undefined) {
+      this.rotatedFacets = this.facets.map(facet => facet.clone())
+    }
     if (this.isAffected(movement)) {
-      return this.facets.map(facet => facet.rotated(rotAxisVec, angle));
+      this.facets.forEach((facet, i) => {
+        const rFacet = this.rotatedFacets![i];
+        facet.rotateInto(rFacet, rotAxisVec, angle);
+      })
     }
     else {
-      return this.facets;
+      this.facets!.forEach((facet, i) => facet.copyInto(this.rotatedFacets![i]));
     }
   }
 }
