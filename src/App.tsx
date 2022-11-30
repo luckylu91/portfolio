@@ -27,7 +27,7 @@ function App() {
     <div className="App">
       {/* <header className="App-header">
       </header> */}
-      <RubikScrollAnimation size={500}/>
+      <RubikScrollAnimation size={500} movementString={"FUMESFUMESFUMESFUMESFUMESFUMES"}/>
       <Section title="Profil">
         <p>
           Je suis passionné de science et de logique depuis ma jeunesse.

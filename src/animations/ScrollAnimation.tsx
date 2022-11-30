@@ -50,15 +50,6 @@ export class ScrollAnimation extends React.Component<Props, State> {
 }
 
 function computeScrollFactor(rect: DOMRect) {
-	const expectedViewportRatio = 16 / 9;
-	// const actualViewportRatio = window.innerWidth / window.innerHeight;
-	let factor = (window.innerHeight - rect.top) / window.innerHeight;
-	// if (actualViewportRatio > expectedViewportRatio) {
-	// 	const correction = expectedViewportRatio / actualViewportRatio;
-	// 	return .5 + (factor - .5) * correction;
-	// }
-	// else {
-		return factor;
-	// }
+	return (window.innerHeight - rect.top) / window.innerHeight;
 }
 
