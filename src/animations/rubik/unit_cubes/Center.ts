@@ -16,6 +16,17 @@ export class Center extends UnitCube {
     this.facets = facetsPoints.map((points, i) => new Facet(points, facetsNormal[i], facetColors[i]));
   }
 
+  reset(position: [number]) {
+    const mainAxis = position[0];
+    const perpAxis = rotationsCycle.get(mainAxis)!;
+    const facetsNormal = [mainAxis, ...perpAxis].map(axis => mainNormals[axis][0]);
+    const facetsPoints = [mainAxis, ...perpAxis].map(axis => generateSquare(axis, position));
+    const facetColors = [facesColor[mainAxis], ...Array(4).fill("black")];
+    this.facets.forEach((facet, i) => {
+      facet.set(facetsPoints[i], facetsNormal[i], facetColors[i]);
+    });
+  }
+
   isAffected(movement: Movement): boolean {
     return (
       movement.middle && rotationsCycle.get(this.position[0])!.includes(movement.rotAxis)

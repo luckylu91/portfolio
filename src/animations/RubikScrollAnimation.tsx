@@ -1,46 +1,54 @@
-import React, { ChangeEvent } from "react";
-import Stack from "@mui/material/Stack";
+import React from "react";
 import { Movement, parseMovementString, reversedMovement } from "./rubik/utils/movements";
 import { RubiksCube } from "./rubik/RubiksCube";
-import * as math from "mathjs";
-import "./RubikScrollAnimation.css";
+import {  ScrollState } from "../App";
 
 type Props = {
-  size: number,
   movementString: string,
 }
-type State = {}
+type State = {
+  top: string,
+  alpha: number,
+  scrollY: number,
+}
 
 export class RubikScrollAnimation extends React.Component<Props, State> {
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  containerRef: React.RefObject<HTMLDivElement>;
+  // containerRef: React.RefObject<HTMLDivElement>;
   ctx?: CanvasRenderingContext2D;
   ticking = false;
   rubiksCube?: RubiksCube;
   currentMovementIndex: number = 0;
   currentMovementCompletion: number = 0;
-  offset: number[];
-  scale: number;
+  offset?: number[];
+  scale?: number;
   movements: Movement[] | null = null;
   drawRequested: boolean = false;
-  top: number = 0;
+  size: number = 0;
+  top: string = "0";
 
   constructor(props: Props) {
     super(props);
     this.canvasRef = React.createRef();
-    this.containerRef = React.createRef();
-    this.offset = [this.props.size / 2, this.props.size / 2];
-    this.scale = this.props.size / (2 * Math.sqrt(3));
+    this.state = {
+      top: "0",
+      alpha: 0,
+      scrollY: 0
+    }
   }
 
   componentDidMount() {
     this.ctx = this.canvasRef.current!.getContext("2d")!;
+    this.updateSize();
+    this.rubiksCube = new RubiksCube();
     this.initialize();
     this.draw();
     document.addEventListener("scroll", this.handleScrollChange.bind(this));
   }
 
   componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any): void {
+    this.updateSize();
+    this.rubiksCube!.reset();
     this.initialize();
     this.draw();
   }
@@ -49,9 +57,16 @@ export class RubikScrollAnimation extends React.Component<Props, State> {
     document.removeEventListener("scroll", this.handleScrollChange.bind(this));
   }
 
+  updateSize() {
+    this.size = this.canvasRef.current!.width;
+    console.log(this.size);
+    this.canvasRef.current!.height = this.size;
+    this.offset = [this.size / 2, this.size / 2];
+    this.scale = this.size / (2 * Math.sqrt(3));
+  }
+
 
   initialize() {
-    this.rubiksCube = new RubiksCube();
     this.currentMovementIndex = 0;
     this.movements = parseMovementString(this.props.movementString);
     if (this.movements !== null) {
@@ -61,22 +76,10 @@ export class RubikScrollAnimation extends React.Component<Props, State> {
   }
 
   updateCubeFromScroll() {
-    const maxScrollY = Math.max(
-      document.body.scrollHeight,
-      document.body.offsetHeight,
-      document.documentElement.clientHeight,
-      document.documentElement.scrollHeight,
-      document.documentElement.offsetHeight
-    ) - window.innerHeight;
-    const scrollY = window.scrollY;
-    const alpha = scrollY / maxScrollY;
-
-    this.canvasRef.current!.style.top = alpha * (1 - this.props.size / maxScrollY) * 100 + "%";
-
-    const sliderValue = alpha * this.movements!.length;
-    const newMovementIndex = alpha < 1 ? Math.floor(sliderValue) : this.movements!.length - 1;
+    const sliderValue = this.state.alpha * this.movements!.length;
+    const newMovementIndex = this.state.alpha < 1 ? Math.floor(sliderValue) : this.movements!.length - 1;
     this.moveTo(newMovementIndex);
-    this.currentMovementCompletion = alpha < 1 ? sliderValue - Math.floor(sliderValue) : 1;
+    this.currentMovementCompletion = this.state.alpha < 1 ? sliderValue - Math.floor(sliderValue) : 1;
   }
 
   private moveTo(newMovementIndex: number) {
@@ -98,52 +101,69 @@ export class RubikScrollAnimation extends React.Component<Props, State> {
     this.currentMovementIndex = newMovementIndex;
   }
 
-
-  animate() {
-    if (this.movements === null)
-      return;
-    this.drawRequested = false;
-    this.updateCubeFromScroll();
-    this.draw();
-  }
-
   // optimisation with regard to requestAnimationFrame;
   handleScrollChange(e: Event) {
     e.preventDefault();
+    const maxScrollY = Math.max(
+      document.body.scrollHeight,
+      document.body.offsetHeight,
+      document.documentElement.clientHeight,
+      document.documentElement.scrollHeight,
+      document.documentElement.offsetHeight
+    ) - window.innerHeight;
+    const scrollY = window.scrollY;
+    const alpha = scrollY / maxScrollY;
+    // this.canvasRef.current!.style.top = alpha * (1 - this.size / maxScrollY) * 100 + "%";
+    // this.top = alpha * (1 - this.size / maxScrollY) * 100 + "%";
+    this.setState({
+      top: alpha * (1 - this.size / maxScrollY) * 100 + "%",
+      alpha,
+      scrollY,
+    });
     if (!this.drawRequested) {
-      requestAnimationFrame(this.animate.bind(this))
+      requestAnimationFrame(() => {
+        if (this.movements === null)
+          return;
+        this.drawRequested = false;
+        this.updateCubeFromScroll();
+        this.draw();
+      })
     }
     this.drawRequested = true;
   }
+
 
   draw() {
     this.ctx!.strokeStyle = "black";
     this.ctx!.fillStyle = "grey";
     this.ctx!.fillRect(0, 0, this.ctx!.canvas.width, this.ctx!.canvas.height);
     if (this.movements!.length == 0) {
-      this.rubiksCube!.draw(this.ctx!, this.offset[0], this.offset[1], this.scale);
+      this.rubiksCube!.draw(this.ctx!, this.offset![0], this.offset![1], this.scale!);
     }
     else {
       const movement = this.movements![this.currentMovementIndex];
       const angle = (movement.positiveDirection ? +1 : -1) * Math.PI / 2 * this.currentMovementCompletion;
-      this.rubiksCube!.draw(this.ctx!, this.offset[0], this.offset[1], this.scale, movement, angle);
+      this.rubiksCube!.draw(this.ctx!, this.offset![0], this.offset![1], this.scale!, movement, angle);
     }
   }
 
 
   render() {
-    return (<div ref={this.containerRef}>
-      <canvas
-        className="rubik-anim"
-        width={this.props.size}
-        height={this.props.size}
-        ref={this.canvasRef}
-        style={{
-          top: this.top * 100 + "%",
-          position: "fixed",
-        }}
-      />
-    </div>)
+    return (
+      // <div>
+        <canvas
+          className="rubik-anim"
+          ref={this.canvasRef}
+          style={{
+            position: "relative",
+            display: "block",
+            width: "100%",
+            top: this.state.top,
+            // top: 0,
+          }}
+        />
+     // </div>
+    );
   }
 }
 

@@ -7,6 +7,12 @@ export class Facet {
     public color: string,
   ) {}
 
+  set(points: math.Matrix[], normal: math.Matrix, color: string) {
+    this.points = points;
+    this.normal = normal;
+    this.color = color;
+  }
+
   clone(): Facet {
     return new Facet(
       this.points.map(m => math.clone(m)),

@@ -15,14 +15,21 @@ const faceTriplets = [
   [3, 2, 1], [3, 1, 5], [3, 5, 4], [3, 4, 2]
 ];
 
+
 export class RubiksCube {
-  cubes: UnitCube[];
+  cubes!: UnitCube[];
   constructor() {
     this.cubes = [
       ...faces.map(axis => new Center([axis])),
       ...facePairs.map(axisPair => new Edge(axisPair as [number, number])),
       ...faceTriplets.map(axisTriplet => new Corner(axisTriplet as [number, number, number]))
     ];
+  }
+
+  reset() {
+    this.cubes.slice(0, 6).forEach((cube, i) => cube.reset([faces[i]]));
+    this.cubes.slice(6, 6 + 12).forEach((cube, i) => cube.reset(facePairs[i] as [number, number]));
+    this.cubes.slice(6 + 12).forEach((cube, i) => cube.reset(faceTriplets[i] as [number, number, number]));
   }
 
   rotate(movement: Movement) {

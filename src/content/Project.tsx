@@ -2,7 +2,7 @@ import { PropsWithChildren } from "react";
 
 export type Props = {
   name: string,
-  img: string,
+  // img: string,
 }
 
 export function Project(props: PropsWithChildren<Props>) {

@@ -9,6 +9,7 @@ export interface UnitCube {
   isAffected(movement: Movement): boolean;
   facets: Facet[];
   rotatedFacets?: Facet[];
+  reset(position: number[]): void;
 }
 
 export abstract class UnitCube implements UnitCube {
