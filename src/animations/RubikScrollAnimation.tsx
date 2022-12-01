@@ -7,16 +7,14 @@ type Props = {
   movementString: string,
 }
 type State = {
-  top: string,
-  alpha: number,
-  scrollY: number,
+  // top: string,
+  // alpha: number,
+  // scrollY: number,
 }
 
 export class RubikScrollAnimation extends React.Component<Props, State> {
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  // containerRef: React.RefObject<HTMLDivElement>;
   ctx?: CanvasRenderingContext2D;
-  ticking = false;
   rubiksCube?: RubiksCube;
   currentMovementIndex: number = 0;
   currentMovementCompletion: number = 0;
@@ -25,31 +23,25 @@ export class RubikScrollAnimation extends React.Component<Props, State> {
   movements: Movement[] | null = null;
   drawRequested: boolean = false;
   size: number = 0;
-  top: string = "0";
 
   constructor(props: Props) {
     super(props);
     this.canvasRef = React.createRef();
-    this.state = {
-      top: "0",
-      alpha: 0,
-      scrollY: 0
-    }
   }
 
   componentDidMount() {
     this.ctx = this.canvasRef.current!.getContext("2d")!;
-    this.updateSize();
+    document.addEventListener("scroll", this.handleScrollChange.bind(this));
     this.rubiksCube = new RubiksCube();
     this.initialize();
+    this.handleScrollChange();
     this.draw();
-    document.addEventListener("scroll", this.handleScrollChange.bind(this));
   }
 
-  componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>, snapshot?: any): void {
-    this.updateSize();
+  componentDidUpdate(): void {
     this.rubiksCube!.reset();
     this.initialize();
+    this.handleScrollChange();
     this.draw();
   }
 
@@ -57,29 +49,28 @@ export class RubikScrollAnimation extends React.Component<Props, State> {
     document.removeEventListener("scroll", this.handleScrollChange.bind(this));
   }
 
-  updateSize() {
+  initialize() {
+    // Dimentions
     this.size = this.canvasRef.current!.width;
-    console.log(this.size);
     this.canvasRef.current!.height = this.size;
     this.offset = [this.size / 2, this.size / 2];
     this.scale = this.size / (2 * Math.sqrt(3));
-  }
 
-
-  initialize() {
+    // Cube state
     this.currentMovementIndex = 0;
     this.movements = parseMovementString(this.props.movementString);
     if (this.movements !== null) {
       this.movements.slice().reverse().forEach(movement => this.rubiksCube!.rotate(reversedMovement(movement)));
-      this.updateCubeFromScroll();
+      this.update();
     }
   }
 
-  updateCubeFromScroll() {
-    const sliderValue = this.state.alpha * this.movements!.length;
-    const newMovementIndex = this.state.alpha < 1 ? Math.floor(sliderValue) : this.movements!.length - 1;
+  update() {
+    const alpha = window.scrollY / this.getMaxScrollY();
+    const sliderValue = alpha * this.movements!.length;
+    const newMovementIndex = alpha < 1 ? Math.floor(sliderValue) : this.movements!.length - 1;
     this.moveTo(newMovementIndex);
-    this.currentMovementCompletion = this.state.alpha < 1 ? sliderValue - Math.floor(sliderValue) : 1;
+    this.currentMovementCompletion = alpha < 1 ? sliderValue - Math.floor(sliderValue) : 1;
   }
 
   private moveTo(newMovementIndex: number) {
@@ -101,31 +92,27 @@ export class RubikScrollAnimation extends React.Component<Props, State> {
     this.currentMovementIndex = newMovementIndex;
   }
 
-  // optimisation with regard to requestAnimationFrame;
-  handleScrollChange(e: Event) {
-    e.preventDefault();
-    const maxScrollY = Math.max(
+  getMaxScrollY() {
+    return Math.max(
       document.body.scrollHeight,
       document.body.offsetHeight,
       document.documentElement.clientHeight,
       document.documentElement.scrollHeight,
       document.documentElement.offsetHeight
     ) - window.innerHeight;
-    const scrollY = window.scrollY;
-    const alpha = scrollY / maxScrollY;
-    // this.canvasRef.current!.style.top = alpha * (1 - this.size / maxScrollY) * 100 + "%";
-    // this.top = alpha * (1 - this.size / maxScrollY) * 100 + "%";
-    this.setState({
-      top: alpha * (1 - this.size / maxScrollY) * 100 + "%",
-      alpha,
-      scrollY,
-    });
+  }
+
+  // optimisation with regard to requestAnimationFrame;
+  handleScrollChange(e?: Event) {
+    e?.preventDefault();
     if (!this.drawRequested) {
       requestAnimationFrame(() => {
         if (this.movements === null)
           return;
+        const alpha = window.scrollY / this.getMaxScrollY();
+        this.canvasRef.current!.style.top = alpha * (window.innerHeight - this.canvasRef.current!.offsetHeight) + "px";
         this.drawRequested = false;
-        this.updateCubeFromScroll();
+        this.update();
         this.draw();
       })
     }
@@ -134,9 +121,7 @@ export class RubikScrollAnimation extends React.Component<Props, State> {
 
 
   draw() {
-    this.ctx!.strokeStyle = "black";
-    this.ctx!.fillStyle = "grey";
-    this.ctx!.fillRect(0, 0, this.ctx!.canvas.width, this.ctx!.canvas.height);
+    this.ctx!.clearRect(0, 0, this.ctx!.canvas.width, this.ctx!.canvas.height);
     if (this.movements!.length == 0) {
       this.rubiksCube!.draw(this.ctx!, this.offset![0], this.offset![1], this.scale!);
     }
@@ -158,7 +143,6 @@ export class RubikScrollAnimation extends React.Component<Props, State> {
             position: "relative",
             display: "block",
             width: "100%",
-            top: this.state.top,
             // top: 0,
           }}
         />

@@ -1,5 +1,6 @@
 import { PropsWithChildren } from "react";
 import "./Section.css";
+import Card from "@mui/material/Card";
 
 type Props = {
   title: string,
