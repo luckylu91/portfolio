@@ -13,6 +13,7 @@ type State = {}
 
 export class RubikScrollAnimation extends React.Component<Props, State> {
   canvasRef: React.RefObject<HTMLCanvasElement>;
+  containerRef: React.RefObject<HTMLDivElement>;
   ctx?: CanvasRenderingContext2D;
   ticking = false;
   rubiksCube?: RubiksCube;
@@ -22,10 +23,12 @@ export class RubikScrollAnimation extends React.Component<Props, State> {
   scale: number;
   movements: Movement[] | null = null;
   drawRequested: boolean = false;
+  top: number = 0;
 
   constructor(props: Props) {
     super(props);
     this.canvasRef = React.createRef();
+    this.containerRef = React.createRef();
     this.offset = [this.props.size / 2, this.props.size / 2];
     this.scale = this.props.size / (2 * Math.sqrt(3));
   }
@@ -67,6 +70,9 @@ export class RubikScrollAnimation extends React.Component<Props, State> {
     ) - window.innerHeight;
     const scrollY = window.scrollY;
     const alpha = scrollY / maxScrollY;
+
+    this.canvasRef.current!.style.top = alpha * (1 - this.props.size / maxScrollY) * 100 + "%";
+
     const sliderValue = alpha * this.movements!.length;
     const newMovementIndex = alpha < 1 ? Math.floor(sliderValue) : this.movements!.length - 1;
     this.moveTo(newMovementIndex);
@@ -126,11 +132,18 @@ export class RubikScrollAnimation extends React.Component<Props, State> {
 
 
   render() {
-    return <canvas
-      className="rubik-anim"
-      ref={this.canvasRef}
-      width={this.props.size}
-      height={this.props.size}
-    />;
+    return (<div ref={this.containerRef}>
+      <canvas
+        className="rubik-anim"
+        width={this.props.size}
+        height={this.props.size}
+        ref={this.canvasRef}
+        style={{
+          top: this.top * 100 + "%",
+          position: "fixed",
+        }}
+      />
+    </div>)
   }
 }
+
