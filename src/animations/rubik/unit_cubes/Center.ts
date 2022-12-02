@@ -8,23 +8,25 @@ import { UnitCube } from "./UnitCube";
 export class Center extends UnitCube {
   constructor(public position: [number]) {
     super();
-    const mainAxis = this.position[0];
-    const perpAxis = rotationsCycle.get(mainAxis)!;
-    const facetsNormal = [mainAxis, ...perpAxis].map(axis => mainNormals[axis][0]);
-    const facetsPoints = [mainAxis, ...perpAxis].map(axis => generateSquare(axis, position));
-    const facetColors = [facesColor[mainAxis], ...Array(4).fill("black")];
+    const [facetsNormal, facetsPoints, facetColors] = this.computeFacets(position);
     this.facets = facetsPoints.map((points, i) => new Facet(points, facetsNormal[i], facetColors[i]));
   }
 
   reset(position: [number]) {
+    this.position = position;
+    const [facetsNormal, facetsPoints, facetColors] = this.computeFacets(position);
+    this.facets.forEach((facet, i) => {
+      facet.set(facetsPoints[i], facetsNormal[i], facetColors[i]);
+    });
+  }
+
+  private computeFacets(position: [number]) {
     const mainAxis = position[0];
     const perpAxis = rotationsCycle.get(mainAxis)!;
     const facetsNormal = [mainAxis, ...perpAxis].map(axis => mainNormals[axis][0]);
     const facetsPoints = [mainAxis, ...perpAxis].map(axis => generateSquare(axis, position));
     const facetColors = [facesColor[mainAxis], ...Array(4).fill("black")];
-    this.facets.forEach((facet, i) => {
-      facet.set(facetsPoints[i], facetsNormal[i], facetColors[i]);
-    });
+    return [facetsNormal, facetsPoints, facetColors];
   }
 
   isAffected(movement: Movement): boolean {
