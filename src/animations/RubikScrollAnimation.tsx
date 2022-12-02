@@ -116,7 +116,7 @@ export class RubikScrollAnimation extends React.Component<Props, State> {
     // this.canvasRef.current!.style.top = alpha * (1 - this.size / maxScrollY) * 100 + "%";
     // this.top = alpha * (1 - this.size / maxScrollY) * 100 + "%";
     this.setState({
-      top: alpha * (1 - this.size / maxScrollY) * 100 + "%",
+      top: - alpha * (1 - this.size / maxScrollY) * 100 + "%",
       alpha,
       scrollY,
     });
