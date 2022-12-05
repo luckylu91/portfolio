@@ -1,4 +1,6 @@
 import * as math from "mathjs";
+import { oppositeAxis, rotationsCycle } from "../utils/axesUtils";
+import { Movement } from "../utils/movements";
 
 export class Facet {
   constructor(
@@ -35,4 +37,14 @@ export class Facet {
     this.points = this.points.map(point => math.rotate(point, angle, rotAxis));
     this.normal = math.rotate(this.normal, angle, rotAxis);
   }
+
+  // move(movement: Movement) {
+  //   let rotAxis = movement.rotAxis;
+  //   if (!movement.positiveDirection) {
+  //     rotAxis = oppositeAxis(rotAxis);
+  //   }
+  //   const rotMatrix = rotationMatrices[rotAxis];
+  //   this.points.map(point => math.multiply(rotMatrix, point));
+  //   this.normal = math.multiply(rotMatrix, this.normal);
+  // }
 }

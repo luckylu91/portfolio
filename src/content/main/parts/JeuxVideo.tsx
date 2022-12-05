@@ -1,6 +1,6 @@
 export function JeuxVideo() {
   return (
-    <div className="row section featured topspace">
+    <div className="row section featured topspace" id="video-games">
       <h2 className="section-title"><span>Jeux-Vidéo</span></h2>
       <p>
         Depuis petit je suis baigné dans l'univers des jeux vidéo:

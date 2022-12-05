@@ -29,7 +29,7 @@ function Projet(props: ProjetProps & PropsWithChildren) {
 
 export function Projets() {
   return (
-    <div className="row section recentworks topspace">
+    <div className="row section recentworks topspace" id="projects">
 
           <h2 className="section-title"><span>Projets</span></h2>
 

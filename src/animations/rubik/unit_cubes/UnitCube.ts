@@ -22,6 +22,9 @@ export abstract class UnitCube implements UnitCube {
       const rotAxisVec = mainNormals[movement.rotAxis][0];
       const angle = (movement.positiveDirection ? +1 : -1) * Math.PI / 2;
       this.facets.forEach(facet => facet.rotate(rotAxisVec, angle));
+    //   */
+    //  const [normal, points] = getFacetInitialPoints(this.position);
+    //  this.facets.forEach(facet => facet.set(points, normal, facet.color));
     }
   }
 
@@ -39,4 +42,6 @@ export abstract class UnitCube implements UnitCube {
       this.facets!.forEach((facet, i) => facet.copyInto(this.rotatedFacets![i]));
     }
   }
+
+  // abstract setColors(other: UnitCube): void;
 }

@@ -22,7 +22,7 @@ export class Center extends UnitCube {
 
   private computeFacets(position: [number]) {
     const mainAxis = position[0];
-    const perpAxis = rotationsCycle.get(mainAxis)!;
+    const perpAxis = rotationsCycle[mainAxis];
     const facetsNormal = [mainAxis, ...perpAxis].map(axis => mainNormals[axis][0]);
     const facetsPoints = [mainAxis, ...perpAxis].map(axis => generateSquare(axis, position));
     const facetColors = [facesColor[mainAxis], ...Array(4).fill("black")];
@@ -31,11 +31,12 @@ export class Center extends UnitCube {
 
   isAffected(movement: Movement): boolean {
     return (
-      movement.middle && rotationsCycle.get(this.position[0])!.includes(movement.rotAxis)
+      movement.middle && rotationsCycle[this.position[0]].includes(movement.rotAxis)
     ||
       !movement.middle && movement.rotAxis == this.position[0]
     );
   }
+
   priorities(movement: Movement): number[] {
     const mainAxis = this.position[0];
     const mainAxisPos = positivizeAxis(this.position[0]);
@@ -48,5 +49,9 @@ export class Center extends UnitCube {
       priority = 2;
     }
     return [priority, 0, 0, 0, 0];
+  }
+
+  setColors(other: Center) {
+    this.facets[0].color = other.facets[0].color;
   }
 }

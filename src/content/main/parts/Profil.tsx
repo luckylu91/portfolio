@@ -1,6 +1,6 @@
 export function Profil() {
   return (
-    <div className="row section featured topspace">
+    <div className="row section featured topspace" id="profile">
       <h2 className="section-title"><span>Profil</span></h2>
       <p>
         Depuis que je suis petit, je suis passionné de science et de logique.

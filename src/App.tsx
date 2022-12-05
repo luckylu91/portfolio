@@ -6,6 +6,7 @@ import { Main } from './content/main/Main';
 import { Footer } from './content/footer/Footer';
 import { UnderFooter } from './content/footer/Underfooter';
 import { useEffect } from 'react';
+import { generateMovementString } from './animations/rubik/utils/generate';
 
 export type ScrollState = {
   alpha: number,
@@ -14,18 +15,24 @@ export type ScrollState = {
 
 function App() {
 
-  // const movementString = generateMovementString();
+  // let movementString: string | undefined;
   // useEffect(() => {
-
-  // }, []);
+  //   movementString = generateMovementString();
+  // }, [])
 
   return (
     <div className="App">
-      <Header/>
-      <Main/>
-      <Footer/>
-      <UnderFooter/>
-      <RubikScrollAnimation movementString={"UFMES"}/>
+      <div className="content">
+        <Header/>
+        <Main/>
+      </div>
+      <div className="footer">
+        <Footer/>
+      </div>
+      <div className="rubik-container">
+        <RubikScrollAnimation movementString={generateMovementString()}/>
+        {/* <RubikScrollAnimation movementString={"FF"}/> */}
+      </div>
     </div>
   );
 }

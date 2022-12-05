@@ -56,4 +56,30 @@ export class Edge extends UnitCube {
     }
     return [priority, priority, 0, 0];
   }
+
+
+  setColors(other: Edge, matching: number[][]) {
+    console.log("SET_COLORS");
+    console.log("Edge");
+    console.log("this.position", this.position);
+    console.log("other.position", other.position);
+    console.log("matching[0]", matching[0]);
+    console.log("matching[1]", matching[1]);
+
+    for (let i = 0; i < 2; i++) {
+      const i1 = this.position.indexOf(matching[0][i]);
+      const i2 = other.position.indexOf(matching[1][i]);
+      console.log("i1", i1);
+      console.log("i2", i2);
+      this.facets[i1].color = other.facets[i2].color;
+    }
+  }
+
+
+  setPositionAndColors(other: Edge) {
+    this.position = [...other.position];
+    for (let i = 0; i < 2; i++) {
+      this.facets[i].color = other.facets[i].color;
+    }
+  }
 }

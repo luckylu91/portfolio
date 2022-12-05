@@ -16,7 +16,7 @@ export function defaultMovement(): Movement {
 
 // Parsing
 
-const movementNotations = new Map([
+export const movementNotations = new Map([
   ["R", 0],
   ["F", 1],
   ["U", 2],
@@ -25,7 +25,7 @@ const movementNotations = new Map([
   ["D", 5],
 ]);
 
-const movementSliceNotations = new Map([
+export const movementSliceNotations = new Map([
   ["S", 0],
   ["M", 1],
   ["E", 2],

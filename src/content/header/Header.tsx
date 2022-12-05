@@ -32,23 +32,12 @@ export function Header() {
         <div className="navbar-collapse collapse">
 
           <ul className="nav navbar-nav">
-            <li className="active"><a href="index.html">Home</a></li>
-            <li><a href="about.html">About</a></li>
-            <li className="dropdown">
-              <a
-                href="#"
-                className="dropdown-toggle"
-                data-toggle="dropdown"
-              >
-                More Pages <b className="caret"></b>
-              </a>
-              <ul className="dropdown-menu">
-                <li><a href="sidebar-left.html">Left Sidebar</a></li>
-                <li><a href="sidebar-right.html">Right Sidebar</a></li>
-                <li><a href="single.html">Blog Post</a></li>
-              </ul>
-            </li>
-            <li><a href="blog.html">Blog</a></li>
+            <li className="active"><a href="#">Top</a></li>
+            <li><a href="#profile">Profil</a></li>
+            <li><a href="#concerning">Plus à mon propos</a></li>
+            <li><a href="#video-games">Jeux-Vidéo</a></li>
+            <li><a href="#experience">Expérience</a></li>
+            <li><a href="#projects">Projets</a></li>
           </ul>
 
         </div>

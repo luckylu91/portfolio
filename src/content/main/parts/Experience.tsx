@@ -1,6 +1,6 @@
 export function Experience() {
   return (
-    <div className="row section featured topspace">
+    <div className="row section featured topspace" id="experience">
       <h2 className="section-title"><span>Éxperience</span></h2>
       <p>
         J'ai travaillé à Sinequa dans le cadre d'une année de césure.

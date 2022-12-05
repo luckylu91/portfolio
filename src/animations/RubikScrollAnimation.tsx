@@ -59,7 +59,7 @@ export function RubikScrollAnimation(props: Props) {
   }, [props.movementString]);
 
   return (
-    <div className="rubik-container">
+    // <div className="rubik-container">
       <canvas
         className="rubik-anim"
         ref={canvasRef}
@@ -69,6 +69,6 @@ export function RubikScrollAnimation(props: Props) {
           width: "100%",
         }}
       />
-    </div>
+    // </div>
   );
 }

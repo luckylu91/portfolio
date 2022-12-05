@@ -14,6 +14,7 @@ export class RubiksCubeManager {
     this.movements = movements;
     if (this.movements !== null) {
       this.movements.slice().reverse().forEach(movement => this.rubiksCube!.rotate(reversedMovement(movement)));
+      // this.movements.slice().reverse().forEach(movement => this.rubiksCube!.move(reversedMovement(movement)));
       // this.update();
     }
   }
@@ -42,6 +43,7 @@ export class RubiksCubeManager {
     }
     for (let movement of movements) {
       this.rubiksCube!.rotate(movement);
+      // this.rubiksCube!.move(movement);
     }
     this.currentMovementIndex = newMovementIndex;
   }

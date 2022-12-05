@@ -44,5 +44,25 @@ export class Corner extends UnitCube {
     }
     return [priority, priority, priority, 0, 0, 0];
   }
+
+  setColors(other: Corner, matching: number[][]): void {
+    console.log("SET_COLORS");
+    console.log("Corner");
+    for (let i = 0; i < 3; i++) {
+      const i1 = this.position.indexOf(matching[0][i]);
+      const i2 = other.position.indexOf(matching[1][i]);
+      console.log("i1", i1);
+      console.log("i2", i2);
+      this.facets[i1].color = other.facets[i2].color;
+      console.log(`setting ${this.facets[i1].color} <- ${other.facets[i2].color}`)
+    }
+  }
+
+  setPositionAndColors(other: Corner) {
+    this.position = [...other.position];
+    for (let i = 0; i < 3; i++) {
+      this.facets[i].color = other.facets[i].color;
+    }
+  }
 }
 
