@@ -10,16 +10,14 @@ export function Main() {
   return (
     <main id="main">
       <div className="container">
-
         <Citation/>
         <Profil/>
         <APropos/>
         <JeuxVideo/>
         <Experience/>
-        <Projets/>
-        {/* <SomethingToTellInABox/> */}
-
       </div>
+      <Projets/>
+      {/* <SomethingToTellInABox/> */}
     </main>
   );
 }
