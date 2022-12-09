@@ -94,6 +94,7 @@
   float: none;
   margin: 0 auto;
   text-align: center;
+  flex-direction: row;
 }
 .navbar-collapse .navbar-nav > li {
   float: none;

@@ -64,33 +64,10 @@ h5 {
   font-size: 20px;
   font-size: 1.25rem;
 }
-a {
-  color: #bd1550;
-}
-a:hover {
-  color: #e93675;
-}
-.lead {
-  font-weight: 300;
-  font-size: 21px;
-  font-size: 1.3125rem;
-}
-.text-msg {
-  line-height: 1.7em;
-  color: #b3b3b3;
-  font-weight: 300;
-  text-transform: capitalize;
-  margin-top: -0.23em;
-}
-.size-auto,
-.size-full,
-.size-large,
-.size-medium,
-.size-thumbnail {
-  max-width: 100%;
-  height: auto;
-}
-
 img {
   max-width: 100%;
+}
+
+a {
+  color: inherit;
 }

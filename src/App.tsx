@@ -26,9 +26,7 @@ function App() {
         <Header/>
         <Main/>
       </div>
-      <div className="footer">
-        <Footer/>
-      </div>
+      <Footer/>
       <div className="rubik-container">
         <RubikScrollAnimation movementString={generateMovementString()}/>
         {/* <RubikScrollAnimation movementString={"FF"}/> */}
