@@ -9,8 +9,22 @@
 #head {
   /* background: #f4f4f4 url(../images/bg_head.jpg) top center; */
   background-size: cover;
-  color: #7C7C7C;
   padding: 30px 0 35px 0;
+  /* background-image: url(../../../public/images/header_back.jpg); */
+  position: relative;
+  overflow: hidden;
+}
+#head #head-background-image {
+  position: absolute;
+  opacity: .5;
+  left: 0;
+  top: 0;
+  object-fit: cover;
+  width: 100%;
+}
+#head #logo {
+  position: relative;
+  z-index: 1;
 }
 #head img.img-circle {
   display: block;
@@ -95,6 +109,7 @@
   margin: 0 auto;
   text-align: center;
   flex-direction: row;
+  justify-content: center;
 }
 .navbar-collapse .navbar-nav > li {
   float: none;

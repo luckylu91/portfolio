@@ -6,11 +6,12 @@ export function Header() {
     <header id="header">
     <div id="head" className="parallax" parallax-speed="2">
       <h1 id="logo" className="text-center">
-        <img className="img-circle" src="logo512.png" alt=""/>
+        <img className="img-circle" src="images/lucas.jpg" alt=""/>
         <span className="title">Lucas Zins</span>
         <span className="tagline">Developpeur<br/>
           <a href="">zins.lucas@gmail.com</a></span>
       </h1>
+      <img id="head-background-image" src="images/header_back.jpg"/>
     </div>
 
     <nav className="navbar navbar-default navbar-sticky">

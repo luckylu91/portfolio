@@ -43,6 +43,7 @@
 }
 .follow-me-icons {
   font-size: 30px;
+  margin-left: auto;
 }
 .follow-me-icons i {
   display: inline-block;

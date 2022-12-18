@@ -49,9 +49,21 @@
   width: 100%;
   /* margin: 0 0 20px; */
 }
-.project .img img {
-  display: block;
+
+.project .aspect-div {
+  width: 100%;
+  height: 50%; /* 16:9 ratio = 9 / 16 = 0.5625 */
+  overflow: hidden;
+  display: flex;
+  justify-content: space-around;
 }
+
+.project .aspect-div img {
+  width: 100%;
+  /* padding: auto 0; */
+  object-fit: contain;
+}
+
 .project .title {
   text-transform: uppercase;
   margin: 0 2em;

@@ -6,7 +6,7 @@ export function Footer() {
     <footer id="footer">
       <div className="container">
         <div className="row justify-content-center">
-    			<div className="contact widget col-xs-3 col-sm-3 col-md-3 col-lg-3">
+    			<div className="contact widget col-xs-6 col-sm-6 col-md-6 col-lg-6">
     				<h3 className="widget-title">Contact</h3>
     				<div className="widget-body">
     					<p>
@@ -19,7 +19,7 @@ export function Footer() {
     				</div>
     			</div>
 
-    			<div className="follow-me widget col-xs-3 col-sm-3 col-md-3 col-lg-3">
+    			<div className="follow-me widget col-xs-6 col-sm-6 col-md-6 col-lg-6">
     				<h3 className="widget-title">Follow me</h3>
     				<div className="widget-body">
     					<p className="follow-me-icons">

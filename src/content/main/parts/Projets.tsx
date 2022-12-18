@@ -14,7 +14,7 @@ function Projet(props: ProjetProps & PropsWithChildren) {
       href={props.githubLink}
     >
       <span className="title">{props.title}</span>
-      <div className="img">
+      <div className="aspect-div">
         <img src={props.image}/>
       </div>
       <div className="description">

@@ -132,7 +132,8 @@
   display: block;
   width: 100%;
   overflow: hidden;
-  margin: 0px 0 25px;
+  margin: 0px 0 50px;
+
   text-align: center;
   font-weight: 300;
   text-transform: uppercase;
@@ -236,4 +237,11 @@
 .page-header .page-title {
   margin-top: 0;
   margin-bottom: 30px;
+}
+
+#main p {
+  font-size: large;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
 }
